@@ -2,8 +2,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { useState } from "react";
 import { Button, TextInput, View } from "react-native";
 import { db } from "./src/config/firebase";
-import axios from "axios";
-
+ 
 export default function App() {
   const [nomeEmpresa, setNomeEmpresa] = useState();
   const [cidadeEmpresa, setCidadeEmpresa] = useState();
