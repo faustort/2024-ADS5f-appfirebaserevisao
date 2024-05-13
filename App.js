@@ -15,7 +15,8 @@ export default function App() {
   // criação da função de forma assíncrona, que aguarda a resposta da requisição
   async function handleCadastro() {
     try {
-      const docRef = await addDoc(collection(db, "empresas"), {
+      const docRef = await addDoc(
+        collection(db, "empresas"), {
         nomeEmpresa: nomeEmpresa,
         cidadeEmpresa: cidadeEmpresa,
         enderecoEmpresa: enderecoEmpresa,
