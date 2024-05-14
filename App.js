@@ -1,68 +1,45 @@
-import { addDoc, collection } from "firebase/firestore";
-import { useState } from "react";
-import { Button, TextInput, View } from "react-native";
-import { db } from "./src/config/firebase";
- 
+import {
+  MD3DarkTheme,
+  MD3LightTheme,
+  Provider,
+  useTheme,
+} from "react-native-paper";
+import AppNavigator from "./src/navigation/AppNavigator";
+import { useColorScheme } from "react-native";
+import {
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+} from "@react-navigation/native";
+
 export default function App() {
-  const [nomeEmpresa, setNomeEmpresa] = useState();
-  const [cidadeEmpresa, setCidadeEmpresa] = useState();
-  const [enderecoEmpresa, setEnderecoEmpresa] = useState();
-  const [cepEmpresa, setCepEmpresa] = useState();
-  const [estadoEmpresa, setEstadoEmpresa] = useState();
-  const [bairroEmpresa, setBairroEmpresa] = useState();
+  const colorScheme = useColorScheme();
 
-  // criação da função de forma assíncrona, que aguarda a resposta da requisição
-  async function handleCadastro() {
-    try {
-      const docRef = await addDoc(
-        collection(db, "empresas"), {
-        nomeEmpresa: nomeEmpresa,
-        cidadeEmpresa: cidadeEmpresa,
-        enderecoEmpresa: enderecoEmpresa,
-        cepEmpresa: cepEmpresa,
-        estadoEmpresa: estadoEmpresa,
-        bairroEmpresa: bairroEmpresa,
-      });
+  const navDark = DarkTheme;
+  const navLight = DefaultTheme;
 
-      console.log("O documento foi criado com a ID:", docRef.id);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const themeDark = MD3DarkTheme;
+  const themeLight = MD3LightTheme;
+
+  const combinedDark = {
+    ...navDark,
+    ...themeDark,
+    colors: { ...navDark.colors, ...themeDark.colors },
+  };
+
+  const combinedLight = {
+    ...navLight,
+    ...themeLight,
+    colors: { ...navLight.colors, ...themeLight.colors },
+  };
+
+  const theme = colorScheme === "dark" ? combinedDark : combinedLight;
 
   return (
-    <View>
-      <TextInput
-        value={nomeEmpresa}
-        onChangeText={setNomeEmpresa}
-        placeholder="Nome da Empresa"
-      />
-      <TextInput
-        value={cepEmpresa}
-        onChangeText={setCepEmpresa}
-        placeholder="CEP"
-      />
-      <TextInput
-        value={cidadeEmpresa}
-        onChangeText={setCidadeEmpresa}
-        placeholder="Cidade Empresa"
-      />
-      <TextInput
-        value={estadoEmpresa}
-        onChangeText={setEstadoEmpresa}
-        placeholder="Estado Empresa"
-      />
-      <TextInput
-        value={bairroEmpresa}
-        onChangeText={setBairroEmpresa}
-        placeholder="Bairro"
-      />
-      <TextInput
-        value={enderecoEmpresa}
-        onChangeText={setEnderecoEmpresa}
-        placeholder="Logradouro"
-      />
-      <Button title="Cadastrar Empresa" onPress={handleCadastro} />
-    </View>
+    <Provider theme={theme}>
+      <NavigationContainer theme={theme}>
+        <AppNavigator />
+      </NavigationContainer>
+    </Provider>
   );
 }
