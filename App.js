@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   MD3DarkTheme,
   MD3LightTheme,
@@ -42,4 +43,10 @@ export default function App() {
       </NavigationContainer>
     </Provider>
   );
+=======
+import AppNavigator from "./src/navigation/AppNavigator";
+
+export default function App() {
+  return <AppNavigator />;
+>>>>>>> 753a0fd (init)
 }
