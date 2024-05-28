@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 import {
   MD3DarkTheme,
   MD3LightTheme,
-  Provider,
-  useTheme,
+  Provider as PaperProvider,
 } from "react-native-paper";
 import AppNavigator from "./src/navigation/AppNavigator";
 import { useColorScheme } from "react-native";
@@ -37,16 +35,10 @@ export default function App() {
   const theme = colorScheme === "dark" ? combinedDark : combinedLight;
 
   return (
-    <Provider theme={theme}>
+    <PaperProvider theme={theme}>
       <NavigationContainer theme={theme}>
         <AppNavigator />
       </NavigationContainer>
-    </Provider>
+    </PaperProvider>
   );
-=======
-import AppNavigator from "./src/navigation/AppNavigator";
-
-export default function App() {
-  return <AppNavigator />;
->>>>>>> 753a0fd (init)
 }
