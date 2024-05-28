@@ -2,7 +2,7 @@ import { Button, Card, Modal, Portal, Surface, Text } from "react-native-paper";
 import { styles } from "../config/styles";
 import tailwind from "twrnc";
 import { useEffect, useState } from "react";
-import { collection, deleteDoc, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { FlatList, View } from "react-native";
 
@@ -15,7 +15,7 @@ export default function ListarEmpresas() {
     const listarEmpresasCadastradas = async () => {
       const colRef = collection(db, "empresas");
       const querySnapshot = await getDocs(colRef);
-      setEmpresas(querySnapshot.docs.map((doc) => doc.data()));
+      setEmpresas(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
 
       querySnapshot.forEach((doc) => {
         console.log(doc.id, "=>", doc.data());
@@ -37,7 +37,7 @@ export default function ListarEmpresas() {
     try {
       await deleteDoc(doc(db, "empresas", selectedEmpresa.id));
       setEmpresas(
-        empresas.filter((empresa) => empresa.id !== selectedEmpresas.id)
+        empresas.filter((empresa) => empresa.id !== selectedEmpresa.id)
       );
       hideModal();
     } catch (e) {
@@ -54,7 +54,7 @@ export default function ListarEmpresas() {
           contentContainerStyle={tailwind`bg-white p-4`}
         >
           <Text>Confirmar Exclusão</Text>
-          <View>
+          <View style={tailwind`mt-4 flex-row justify-between`}>
             <Button onPress={hideModal} mode="contained">
               Cancelar
             </Button>
@@ -71,7 +71,7 @@ export default function ListarEmpresas() {
         </Text>
         <FlatList
           data={empresas}
-          keyExtractor={(item) => item.nomeEmpresa}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <Card mode="outlined" style={tailwind`mb-3`}>
               <Card.Title title={item.nomeEmpresa} />
