@@ -5,7 +5,7 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState({
@@ -14,7 +14,7 @@ export default function LoginScreen() {
     mensagem: "",
   });
 
-  async function handleLogin({ navigation }) {
+  async function handleLogin() {
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -61,6 +61,12 @@ export default function LoginScreen() {
         />
         <Button mode="contained" onPress={handleLogin}>
           Faça seu login
+        </Button>
+        <Button
+          mode="contained"
+          onPress={() => navigation.navigate("CadastrarEmpresa")}
+        >
+          Cadastrar Empresa
         </Button>
       </View>
     </Surface>

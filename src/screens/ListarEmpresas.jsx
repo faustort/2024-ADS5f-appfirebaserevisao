@@ -1,26 +1,21 @@
-import { Button, Card, Surface, Text } from "react-native-paper";
+import { Button, Card, Modal, Portal, Surface, Text } from "react-native-paper";
 import { styles } from "../config/styles";
 import tailwind from "twrnc";
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, getDocs } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { FlatList, View } from "react-native";
 
 export default function ListarEmpresas() {
   const [empresas, setEmpresas] = useState([]);
+  const [selectedEmpresa, setSelectedEmpresa] = useState(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const listarEmpresasCadastradas = async () => {
       const colRef = collection(db, "empresas");
       const querySnapshot = await getDocs(colRef);
       setEmpresas(querySnapshot.docs.map((doc) => doc.data()));
-      /*
-        bairroEmpresa
-        cepEmpresa
-        cidadeEmpresa
-        enderecoEmpresa
-        estadoEmpresa
-      */
 
       querySnapshot.forEach((doc) => {
         console.log(doc.id, "=>", doc.data());
@@ -29,17 +24,54 @@ export default function ListarEmpresas() {
     listarEmpresasCadastradas();
   }, []);
 
+  const showModal = (empresa) => {
+    setSelectedEmpresa(empresa);
+    setVisible(true);
+  };
+
+  const hideModal = () => {
+    setVisible(false);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteDoc(doc(db, "empresas", selectedEmpresa.id));
+      setEmpresas(
+        empresas.filter((empresa) => empresa.id !== selectedEmpresas.id)
+      );
+      hideModal();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <Surface style={styles.container}>
+      <Portal>
+        <Modal
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={tailwind`bg-white p-4`}
+        >
+          <Text>Confirmar Exclusão</Text>
+          <View>
+            <Button onPress={hideModal} mode="contained">
+              Cancelar
+            </Button>
+            <Button mode="contained" onPress={handleDelete}>
+              Excluir
+            </Button>
+          </View>
+        </Modal>
+      </Portal>
+
       <View style={styles.container_inner}>
-        <Text style={tailwind`text-center text-2xl mb-[20px]`}>Empresas Cadastradas</Text>
-        {/* {empresas.map((empresa) => (
-          <Text key={empresa.nomeEmpresa} style={tailwind`text-center text-xl`}>
-            {empresa.nomeEmpresa}
-          </Text>
-        ))} */}
+        <Text style={tailwind`text-center text-2xl mb-[20px]`}>
+          Empresas Cadastradas
+        </Text>
         <FlatList
           data={empresas}
+          keyExtractor={(item) => item.nomeEmpresa}
           renderItem={({ item }) => (
             <Card mode="outlined" style={tailwind`mb-3`}>
               <Card.Title title={item.nomeEmpresa} />
@@ -52,7 +84,7 @@ export default function ListarEmpresas() {
               </Card.Content>
               <Card.Actions>
                 <Button>Editar</Button>
-                <Button>Excluir</Button>
+                <Button onPress={() => showModal(item)}>Excluir</Button>
               </Card.Actions>
             </Card>
           )}
